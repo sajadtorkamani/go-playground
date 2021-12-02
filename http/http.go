@@ -17,7 +17,7 @@ var quotes = []Quote{
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the homepage!!!!!!!!")
+	fmt.Fprintf(w, "Welcome to the homepage!.")
 }
 
 func listQuotes(w http.ResponseWriter, r *http.Request) {
@@ -34,5 +34,4 @@ func main() {
 	fmt.Printf("Server listening on http://localhost:%v\n", PORT)
 	handleRequests()
 	http.ListenAndServe(fmt.Sprintf(":%v", PORT), nil)
-
 }
