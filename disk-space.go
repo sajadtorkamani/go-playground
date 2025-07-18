@@ -30,7 +30,6 @@ func main() {
 	printer.Printf("Total space: %.fMB. Available space: %.f", totalSpace, availableSpace)
 }
 
-// Convert a string in format like 10Gi, 10Mi, or 10Ki to bytes
 func extractSizeInMb(sizeString string) float64 {
 	sizeUnit, err := extractUnit(sizeString)
 
