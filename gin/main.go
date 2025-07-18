@@ -14,6 +14,12 @@ func main() {
 		})
 	})
 
+	router.GET("/jokes", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"jokes": []string{"foo"},
+		})
+	})
+
 	fmt.Println("🚀 Server listening on http://localhost:8080")
 
 	router.Run()
