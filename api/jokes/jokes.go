@@ -13,6 +13,13 @@ func JokeDoesNotExist(jokeContent string) bool {
 	return joke.ID == 0
 }
 
+func GetJokes() []models.Joke {
+	var jokes []models.Joke
+	db.DB.Find(&jokes)
+
+	return jokes
+}
+
 func GetJokeCount() int64 {
 	var totalNumJokes int64
 

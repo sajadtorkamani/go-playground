@@ -38,7 +38,7 @@ func main() {
 	})
 
 	router.GET("/jokes", func(c *gin.Context) {
-		c.JSON(200, gin.H{"jokeCount": jokes.GetJokeCount()})
+		c.JSON(200, jokes.GetJokes())
 	})
 
 	fmt.Println("🚀 Server listening on http://localhost:8080")
