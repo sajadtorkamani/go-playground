@@ -51,7 +51,7 @@ func isValidLine(line string) bool {
 }
 
 // Convert a string in format like 10Gi, 10Mi, or 10Ki to bytes
-func extractSizeInMb(val string) int {
+func extractSizeInMb(val string) float64 {
 	nonDigitsRegex := regexp.MustCompile(`\D`)
 
 	unit, err := extractUnit(val)
@@ -78,7 +78,7 @@ func extractSizeInMb(val string) int {
 		panic(err)
 	}
 
-	return sizeStringToBytes(size, unit)
+	return sizeStringToMb(size, unit)
 }
 
 type SizeUnit string
@@ -106,6 +106,12 @@ func extractUnit(sizeString string) (unit SizeUnit, err error) {
 
 }
 
+func sizeStringToMb(size int, unit SizeUnit) float64 {
+	bytes := sizeStringToBytes(size, unit)
+
+	return bytesToMb(bytes)
+}
+
 func sizeStringToBytes(size int, unit SizeUnit) int {
 	switch unit {
 	case Gi:
@@ -117,4 +123,8 @@ func sizeStringToBytes(size int, unit SizeUnit) int {
 	default:
 		panic(fmt.Sprintf("Invalid unit: %s", unit))
 	}
+}
+
+func bytesToMb(bytes int) float64 {
+	return float64(bytes) / (1024 * 1024)
 }
