@@ -20,5 +20,8 @@ func main() {
 
 	db.AutoMigrate(&Joke{})
 
+	db.Create(&Joke{content: "Some funny hoke..."})
+	db.Create(&Joke{content: "Another funny joke..."})
+
 	fmt.Println("Connected to db successfully")
 }
