@@ -30,5 +30,14 @@ func main() {
 		db.Create(&Joke{Content: joke})
 	}
 
-	fmt.Println(fmt.Sprintf("Added %d jokes", len(jokes)))
+	var totalNumJokes int64
+	result := db.Model(&Joke{}).Count(&totalNumJokes)
+
+	if result.Error != nil {
+		panic(result.Error)
+	}
+
+	fmt.Println(
+		fmt.Sprintf("✅  Added new %d jokes. We now have %d jokes in total.", len(jokes), totalNumJokes),
+	)
 }
