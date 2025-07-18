@@ -12,6 +12,26 @@ type Joke struct {
 }
 
 func main() {
+	db := connectToDb()
+
+	hokes := []string{"Joke 1", "Joke 2", "Joke 3"}
+	numJokesAdded := 0
+
+	for _, jokeContent := range hokes {
+		addJoke(db, jokeContent)
+		numJokesAdded += 1
+	}
+
+	if numJokesAdded > 0 {
+		fmt.Println(
+			fmt.Sprintf("✅  Added new %d hokes. We now have %d hokes in total.", numJokesAdded, getJokeCount(db)),
+		)
+	} else {
+		fmt.Println("No hokes added.")
+	}
+}
+
+func connectToDb() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("jokes.db"), &gorm.Config{})
 
 	if err != nil {
@@ -24,20 +44,29 @@ func main() {
 		panic(err)
 	}
 
-	jokes := []string{"Joke 1", "Joke 2", "Joke 3"}
+	return db
+}
 
-	for _, joke := range jokes {
-		db.Create(&Joke{Content: joke})
+func addJoke(db *gorm.DB, jokeContent string) {
+	var joke Joke
+	db.Where("content = ?", jokeContent).First(&joke)
+
+	// If the joke has been added, skip it
+	if joke.ID > 0 {
+		return
 	}
 
+	db.Create(&Joke{Content: jokeContent})
+}
+
+func getJokeCount(db *gorm.DB) int64 {
 	var totalNumJokes int64
+
 	result := db.Model(&Joke{}).Count(&totalNumJokes)
 
 	if result.Error != nil {
 		panic(result.Error)
 	}
 
-	fmt.Println(
-		fmt.Sprintf("✅  Added new %d jokes. We now have %d jokes in total.", len(jokes), totalNumJokes),
-	)
+	return totalNumJokes
 }
