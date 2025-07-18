@@ -31,3 +31,11 @@ func GetJokeCount() int64 {
 
 	return totalNumJokes
 }
+
+func GetJokeById(jokeId int) models.Joke {
+	var jokeResult models.Joke
+	db.DB.First(&jokeResult, jokeId)
+
+	return jokeResult
+
+}
