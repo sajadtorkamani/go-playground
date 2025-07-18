@@ -24,7 +24,7 @@ func main() {
 		panic(err)
 	}
 
-	db.Create(&Joke{Content: "Some funny hoke..."})
+	db.Create(&Joke{Content: "Some funny joke..."})
 	db.Create(&Joke{Content: "Another funny joke..."})
 
 	fmt.Println("Connected to DB successfully")
