@@ -90,7 +90,7 @@ const (
 )
 
 func extractUnit(sizeString string) (unit SizeUnit, err error) {
-	lastTwoChars := sizeString[:len(sizeString)-2]
+	lastTwoChars := sizeString[-len(sizeString)-2]
 
 	isValidUnit, err := regexp.MatchString("Gi|Mi|Ki", lastTwoChars)
 
