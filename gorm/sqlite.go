@@ -24,8 +24,11 @@ func main() {
 		panic(err)
 	}
 
-	db.Create(&Joke{Content: "Some funny joke..."})
-	db.Create(&Joke{Content: "Another funny joke..."})
+	jokes := []string{"Joke 1", "Joke 2", "Joke 3"}
 
-	fmt.Println("Connected to DB successfully")
+	for _, joke := range jokes {
+		db.Create(&Joke{Content: joke})
+	}
+
+	fmt.Println(fmt.Sprintf("Added %d jokes", len(jokes)))
 }
