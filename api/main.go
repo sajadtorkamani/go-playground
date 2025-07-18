@@ -28,30 +28,38 @@ func initialiseRouter() *gin.Engine {
 		})
 	})
 
-	router.GET("/jokes", func(c *gin.Context) {
-		c.JSON(http.StatusOK, jokes.GetJokes())
-	})
-
-	router.GET("/jokes/:jokeId", func(c *gin.Context) {
-		jokeId, err := strconv.Atoi(c.Param("jokeId"))
-
-		if err != nil {
-			panic(err)
-		}
-
-		joke := jokes.GetJokeById(jokeId)
-
-		if joke.ID == 0 {
-			c.JSON(http.StatusNotFound, gin.H{"message": "Not found"})
-			return
-		}
-
-		c.JSON(http.StatusOK, joke)
-	})
+	router.GET("/jokes", listJokes)
+	router.GET("/jokes/:jokeId", getJoke)
+	router.POST("/jokes", createJoke)
 
 	fmt.Println("🚀 Server listening on http://localhost:8080")
 
 	return router
+}
+
+func listJokes(c *gin.Context) {
+	c.JSON(http.StatusOK, jokes.GetJokes())
+}
+
+func getJoke(c *gin.Context) {
+	jokeId, err := strconv.Atoi(c.Param("jokeId"))
+
+	if err != nil {
+		panic(err)
+	}
+
+	joke := jokes.GetJokeById(jokeId)
+
+	if joke.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, joke)
+}
+
+func createJoke(c *gin.Context) {
+	c.JSON(http.StatusCreated, gin.H{"message": "TODO: Create the joke"})
 }
 
 func seedDatabase() {
