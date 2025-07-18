@@ -16,28 +16,14 @@ func main() {
 		panic(err.Error())
 	}
 
-	totalSpace := 0.0
-	availableSpace := 0.0
-
 	cmdOutput := string(stdout)
 	lines := strings.Split(cmdOutput, "\n")
 
-	for _, line := range lines[1:] {
-		line = strings.Trim(line, " ")
+	thirdLastLine := lines[len(lines)-3]
+	columns := strings.Fields(thirdLastLine)
 
-		if !isValidLine(line) {
-			continue
-		}
-
-		columns := strings.Fields(line)
-		diskTotalSpace := extractSizeInMb(columns[1])
-		diskAvailableSpace := extractSizeInMb(columns[3])
-
-		totalSpace = totalSpace + diskTotalSpace
-		availableSpace = availableSpace + diskAvailableSpace
-
-		//fmt.Println(fmt.Sprintf("diskTotalSpace: %.fMB, diskUsedSpace: %.fMB, diskAvailableSpace: %.fMB", diskTotalSpace, diskUsedSpace, diskAvailableSpace))
-	}
+	totalSpace := extractSizeInMb(columns[1])
+	availableSpace := extractSizeInMb(columns[3])
 
 	fmt.Printf("Total space: %.fMB. Available space: %.fMB", totalSpace, availableSpace)
 }
