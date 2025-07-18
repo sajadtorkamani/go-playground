@@ -8,7 +8,14 @@ import (
 )
 
 func main() {
-	file, err := os.ReadFile("quotes.txt")
+	currentDirectory, err := os.Getwd()
+
+	if err != nil {
+		fmt.Println("Failed to determine current directory")
+		return
+	}
+
+	file, err := os.ReadFile(fmt.Sprintf("%s/data/quotes.txt", currentDirectory))
 
 	if err != nil {
 		log.Fatal(err)
