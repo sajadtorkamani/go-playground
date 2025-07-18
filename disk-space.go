@@ -30,9 +30,9 @@ func main() {
 		}
 
 		columns := strings.Fields(line)
-		totalSpace := extractSize(columns[1])
-		usedSpace := extractSize(columns[2])
-		availableSpace := extractSize(columns[3])
+		totalSpace := extractSizeInMb(columns[1])
+		usedSpace := extractSizeInMb(columns[2])
+		availableSpace := extractSizeInMb(columns[3])
 
 		fmt.Println(fmt.Sprintf("totalSpace: %d, usedSpace: %d, availableSpace: %d", totalSpace, usedSpace, availableSpace))
 	}
@@ -50,27 +50,71 @@ func isValidLine(line string) bool {
 	return true
 }
 
-func extractSize(val string) int {
+// Convert a string in format like 10Gi, 10Mi, or 10Ki to bytes
+func extractSizeInMb(val string) int {
 	nonDigitsRegex := regexp.MustCompile(`\D`)
+
+	unit, err := extractUnit(val)
+
+	if err != nil {
+		panic(err)
+	}
+
+	// Invalid unit so return 0
+	if unit == "" {
+		return 0
+	}
+
 	digits := nonDigitsRegex.ReplaceAllString(val, "")
 
-	if len(digits) > 0 {
-		size, err := strconv.Atoi(digits)
-
-		if err != nil {
-			panic(err)
-		}
-
-		return size
+	// No digits so return 0
+	if len(digits) == 0 {
+		return 0
 	}
 
-	return 0
+	size, err := strconv.Atoi(digits)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return sizeStringToMb(size, unit)
 }
 
-func getOrFallback[T any](slice []T, index int, fallback T) T {
-	if index >= 0 && index < len(slice) {
-		return slice[index]
+type SizeUnit string
+
+const (
+	Gi SizeUnit = "Gi"
+	Mi SizeUnit = "Mi"
+	Ki SizeUnit = "Ki"
+)
+
+func extractUnit(sizeString string) (unit SizeUnit, err error) {
+	lastTwoChars := sizeString[:len(sizeString)-2]
+
+	isValidUnit, err := regexp.MatchString("Gi|Mi|Ki", lastTwoChars)
+
+	if err != nil {
+		return "", err
 	}
 
-	return fallback
+	if isValidUnit {
+		return SizeUnit(lastTwoChars), nil
+	}
+
+	return "", nil
+
+}
+
+func sizeStringToMb(size int, unit SizeUnit) int {
+	switch unit {
+	case Gi:
+		return size / 100
+	case Mi:
+		return size
+	case Ki:
+		return size / 1000
+	default:
+		panic(fmt.Sprintf("Invalid unit: %s", unit))
+	}
 }
