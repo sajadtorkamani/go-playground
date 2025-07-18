@@ -78,7 +78,7 @@ func extractSizeInMb(val string) int {
 		panic(err)
 	}
 
-	return sizeStringToMb(size, unit)
+	return sizeStringToBytes(size, unit)
 }
 
 type SizeUnit string
@@ -90,7 +90,7 @@ const (
 )
 
 func extractUnit(sizeString string) (unit SizeUnit, err error) {
-	lastTwoChars := sizeString[-len(sizeString)-2]
+	lastTwoChars := sizeString[len(sizeString)-2:]
 
 	isValidUnit, err := regexp.MatchString("Gi|Mi|Ki", lastTwoChars)
 
@@ -106,14 +106,14 @@ func extractUnit(sizeString string) (unit SizeUnit, err error) {
 
 }
 
-func sizeStringToMb(size int, unit SizeUnit) int {
+func sizeStringToBytes(size int, unit SizeUnit) int {
 	switch unit {
 	case Gi:
-		return size / 100
+		return size * 1024 * 1024 * 1024
 	case Mi:
-		return size
+		return size * 1024 * 1024
 	case Ki:
-		return size / 1000
+		return size * 1024
 	default:
 		panic(fmt.Sprintf("Invalid unit: %s", unit))
 	}
