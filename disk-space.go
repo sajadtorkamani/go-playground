@@ -34,7 +34,7 @@ func main() {
 		usedSpace := extractSizeInMb(columns[2])
 		availableSpace := extractSizeInMb(columns[3])
 
-		fmt.Println(fmt.Sprintf("totalSpace: %d, usedSpace: %d, availableSpace: %d", totalSpace, usedSpace, availableSpace))
+		fmt.Println(fmt.Sprintf("totalSpace: %.fMB, usedSpace: %.fMB, availableSpace: %.fMB", totalSpace, usedSpace, availableSpace))
 	}
 }
 
