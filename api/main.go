@@ -57,7 +57,23 @@ func getJoke(c *gin.Context) {
 	c.JSON(http.StatusOK, joke)
 }
 
+type CreateJokeRequest struct {
+	Content string `json:"content" binding:"required"`
+}
+
 func createJoke(c *gin.Context) {
+	// TODO: Validate that the request body is a JSON object with a `content` field
+	// https://gin-gonic.com/en/docs/examples/binding-and-validation/
+
+	var request CreateJokeRequest
+
+	err := c.ShouldBindJSON(&request)
+
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"message": "TODO: Create the joke"})
 }
 
