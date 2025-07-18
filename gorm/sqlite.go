@@ -8,7 +8,7 @@ import (
 
 type Joke struct {
 	gorm.Model
-	content string
+	Content string
 }
 
 func main() {
@@ -18,10 +18,14 @@ func main() {
 		panic("Failed to connect to DB")
 	}
 
-	db.AutoMigrate(&Joke{})
+	err = db.AutoMigrate(&Joke{})
 
-	db.Create(&Joke{content: "Some funny hoke..."})
-	db.Create(&Joke{content: "Another funny joke..."})
+	if err != nil {
+		panic(err)
+	}
 
-	fmt.Println("Connected to db successfully")
+	db.Create(&Joke{Content: "Some funny hoke..."})
+	db.Create(&Joke{Content: "Another funny joke..."})
+
+	fmt.Println("Connected to DB successfully")
 }
