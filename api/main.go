@@ -22,12 +22,7 @@ func main() {
 func initialiseRouter() *gin.Engine {
 	router := gin.Default()
 
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello!",
-		})
-	})
-
+	router.GET("/", apiEntry)
 	router.GET("/jokes", listJokes)
 	router.GET("/jokes/:jokeId", getJoke)
 	router.POST("/jokes", createJoke)
@@ -35,6 +30,10 @@ func initialiseRouter() *gin.Engine {
 	fmt.Println("🚀 Server listening on http://localhost:8080")
 
 	return router
+}
+
+func apiEntry(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Hello!"})
 }
 
 func listJokes(c *gin.Context) {
