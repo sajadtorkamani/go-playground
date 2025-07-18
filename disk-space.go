@@ -16,8 +16,8 @@ func main() {
 		panic(err.Error())
 	}
 
-	//totalSpace := 0
-	//availableSpace := 0
+	totalSpace := 0.0
+	availableSpace := 0.0
 
 	cmdOutput := string(stdout)
 	lines := strings.Split(cmdOutput, "\n")
@@ -30,12 +30,16 @@ func main() {
 		}
 
 		columns := strings.Fields(line)
-		totalSpace := extractSizeInMb(columns[1])
-		usedSpace := extractSizeInMb(columns[2])
-		availableSpace := extractSizeInMb(columns[3])
+		diskTotalSpace := extractSizeInMb(columns[1])
+		diskAvailableSpace := extractSizeInMb(columns[3])
 
-		fmt.Println(fmt.Sprintf("totalSpace: %.fMB, usedSpace: %.fMB, availableSpace: %.fMB", totalSpace, usedSpace, availableSpace))
+		totalSpace = totalSpace + diskTotalSpace
+		availableSpace = availableSpace + diskAvailableSpace
+
+		//fmt.Println(fmt.Sprintf("diskTotalSpace: %.fMB, diskUsedSpace: %.fMB, diskAvailableSpace: %.fMB", diskTotalSpace, diskUsedSpace, diskAvailableSpace))
 	}
+
+	fmt.Printf("Total space: %.fMB. Available space: %.fMB", totalSpace, availableSpace)
 }
 
 func isValidLine(line string) bool {
