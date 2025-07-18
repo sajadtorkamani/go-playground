@@ -1,4 +1,4 @@
-module go-playground/gorm
+module go-playground/gorm/db
 
 go 1.22.6
 
