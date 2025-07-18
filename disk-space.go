@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"golang.org/x/text/message"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -17,45 +18,33 @@ func main() {
 	}
 
 	cmdOutput := string(stdout)
-	lines := strings.Split(cmdOutput, "\n")
 
+	lines := strings.Split(cmdOutput, "\n")
 	thirdLastLine := lines[len(lines)-3]
 	columns := strings.Fields(thirdLastLine)
 
 	totalSpace := extractSizeInMb(columns[1])
 	availableSpace := extractSizeInMb(columns[3])
 
-	fmt.Printf("Total space: %.fMB. Available space: %.fMB", totalSpace, availableSpace)
-}
-
-func isValidLine(line string) bool {
-	if len(line) == 0 {
-		return false
-	}
-
-	if strings.Contains(line, "Filesystem") {
-		return false
-	}
-
-	return true
+	printer := message.NewPrinter(message.MatchLanguage("en"))
+	printer.Printf("Total space: %.fMB. Available space: %.f", totalSpace, availableSpace)
 }
 
 // Convert a string in format like 10Gi, 10Mi, or 10Ki to bytes
-func extractSizeInMb(val string) float64 {
-	nonDigitsRegex := regexp.MustCompile(`\D`)
-
-	unit, err := extractUnit(val)
+func extractSizeInMb(sizeString string) float64 {
+	sizeUnit, err := extractUnit(sizeString)
 
 	if err != nil {
 		panic(err)
 	}
 
-	// Invalid unit so return 0
-	if unit == "" {
+	// Invalid sizeUnit so return 0
+	if sizeUnit == "" {
 		return 0
 	}
 
-	digits := nonDigitsRegex.ReplaceAllString(val, "")
+	nonDigitsRegex := regexp.MustCompile(`\D`)
+	digits := nonDigitsRegex.ReplaceAllString(sizeString, "")
 
 	// No digits so return 0
 	if len(digits) == 0 {
@@ -68,7 +57,7 @@ func extractSizeInMb(val string) float64 {
 		panic(err)
 	}
 
-	return sizeStringToMb(size, unit)
+	return sizeStringToMb(size, sizeUnit)
 }
 
 type SizeUnit string
