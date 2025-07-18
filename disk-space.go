@@ -10,6 +10,32 @@ import (
 )
 
 func main() {
+	stats := getDiskSpaceStats()
+
+	printer := message.NewPrinter(message.MatchLanguage("en"))
+	printer.Printf("Total space: %.fMB\n", stats.TotalSpace)
+	printer.Printf("Available space: %.fMB\n", stats.AvailableSpace)
+}
+
+type DiskSpaceStats struct {
+	TotalSpace     float64
+	AvailableSpace float64
+}
+
+func getDiskSpaceStats() DiskSpaceStats {
+	output := getDiskSpaceOutput()
+
+	lines := strings.Split(output, "\n")
+	thirdLastLine := lines[len(lines)-3]
+	columns := strings.Fields(thirdLastLine)
+
+	return DiskSpaceStats{
+		TotalSpace:     extractSizeInMb(columns[1]),
+		AvailableSpace: extractSizeInMb(columns[3]),
+	}
+}
+
+func getDiskSpaceOutput() string {
 	cmd := exec.Command("df", "-h")
 	stdout, err := cmd.Output()
 
@@ -17,17 +43,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	cmdOutput := string(stdout)
-
-	lines := strings.Split(cmdOutput, "\n")
-	thirdLastLine := lines[len(lines)-3]
-	columns := strings.Fields(thirdLastLine)
-
-	totalSpace := extractSizeInMb(columns[1])
-	availableSpace := extractSizeInMb(columns[3])
-
-	printer := message.NewPrinter(message.MatchLanguage("en"))
-	printer.Printf("Total space: %.fMB. Available space: %.f", totalSpace, availableSpace)
+	return string(stdout)
 }
 
 func extractSizeInMb(sizeString string) float64 {
