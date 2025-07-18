@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -28,11 +30,11 @@ func main() {
 		}
 
 		columns := strings.Fields(line)
-		size := columns[1]
-		used := columns[2]
-		available := columns[3]
+		totalSpace := extractSize(columns[1])
+		usedSpace := extractSize(columns[2])
+		availableSpace := extractSize(columns[3])
 
-		fmt.Println(fmt.Sprintf("size: %s, used: %s, available: %s", size, used, available))
+		fmt.Println(fmt.Sprintf("totalSpace: %d, usedSpace: %d, availableSpace: %d", totalSpace, usedSpace, availableSpace))
 	}
 }
 
@@ -40,11 +42,29 @@ func isValidLine(line string) bool {
 	if len(line) == 0 {
 		return false
 	}
+
 	if strings.Contains(line, "Filesystem") {
 		return false
 	}
 
 	return true
+}
+
+func extractSize(val string) int {
+	nonDigitsRegex := regexp.MustCompile(`\D`)
+	digits := nonDigitsRegex.ReplaceAllString(val, "")
+
+	if len(digits) > 0 {
+		size, err := strconv.Atoi(digits)
+
+		if err != nil {
+			panic(err)
+		}
+
+		return size
+	}
+
+	return 0
 }
 
 func getOrFallback[T any](slice []T, index int, fallback T) T {
